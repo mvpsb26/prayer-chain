@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mary's Village Paraclete Prayer Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf7f2; --parchment: #f0ead8; --gold: #b8972a; --gold-light: #d4b84a;
+  --brown: #5c3d2e; --brown-dark: #3a2318; --text: #2c1f14; --text-muted: #7a6a5a;
+  --border: #d9cbb8; --white: #ffffff; --radius: 12px; --shadow: 0 2px 16px rgba(92,61,46,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.6; }
+.app-header { background: var(--brown-dark); text-align: center; padding: 28px 20px 22px; }
+.app-header .cross { font-size: 22px; color: var(--gold-light); letter-spacing: 6px; margin-bottom: 8px; display: block; }
+.app-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; line-height: 1.25; color: var(--parchment); }
+.app-header p { font-size: 12px; color: var(--gold-light); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 6px; }
+.tabs { display: flex; background: var(--brown); border-bottom: 2px solid var(--gold); }
+.tab-btn { flex: 1; padding: 13px 8px; background: none; border: none; color: #c9b99a; font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.tab-btn.active { background: var(--gold); color: var(--brown-dark); }
+.tab-btn:not(.active):hover { background: rgba(184,151,42,0.2); color: var(--parchment); }
+.page { display: none; padding: 20px 16px 40px; max-width: 480px; margin: 0 auto; }
+.page.active { display: block; }
+.card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.card-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; color: var(--brown-dark); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+input[type="text"], input[type="email"], input[type="date"], input[type="time"],
+input[type="password"], input[type="url"], select, textarea {
+  width: 100%; padding: 11px 13px; border: 1px solid var(--border); border-radius: 8px;
+  font-family: 'Lato', sans-serif; font-size: 15px; color: var(--text); background: var(--cream);
+  appearance: none; outline: none; transition: border 0.2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); background: var(--white); }
+.btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 8px; font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; text-align: center; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--gold); color: var(--brown-dark); }
+.btn-secondary { background: var(--brown); color: var(--cream); }
+.btn-danger { background: #c0392b; color: #fff; }
+.btn-sm { display: inline-block; width: auto; padding: 7px 14px; font-size: 13px; }
+.btn-outline { background: none; border: 1px solid var(--gold); color: var(--gold); }
+.btn-outline-danger { background: none; border: 1px solid #c0392b; color: #c0392b; }
+.btn:hover { opacity: 0.9; }
+.alert { padding: 12px 15px; border-radius: 8px; font-size: 14px; margin-bottom: 14px; display: none; line-height: 1.5; }
+.alert.show { display: block; }
+.alert-success { background: #eaf7ee; color: #2d6a4f; border: 1px solid #a8d5ba; }
+.alert-error   { background: #fdecea; color: #922b21; border: 1px solid #f5b7b1; }
+.alert-info    { background: #eef4fb; color: #1a5276; border: 1px solid #aed6f1; }
+.slot-item { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; background: var(--white); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.slot-item:hover { border-color: var(--gold); background: #fffdf5; }
+.slot-item.booked { background: linear-gradient(135deg,#f5f0e8,#ede4d0); border-color: var(--gold); border-left: 4px solid var(--gold); cursor: default; opacity: 0.85; }
+.slot-item.booked:hover { border-color: var(--gold); }
+.slot-item.booked .slot-time { color: var(--text-muted); }
+.slot-time { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--brown-dark); min-width: 80px; }
+.slot-name { flex: 1; font-size: 14px; color: var(--text-muted); }
+.slot-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; }
+.badge-open  { background: #eaf7ee; color: #2d6a4f; }
+.badge-taken { background: var(--brown); color: var(--parchment); }
+/* Admin inner tabs */
+.admin-tabs { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 18px; }
+.atab { flex: 1; padding: 11px 6px; background: var(--cream); border: none; border-right: 1px solid var(--border); font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--text-muted); cursor: pointer; transition: background 0.2s, color 0.2s; }
+.atab:last-child { border-right: none; }
+.atab.active { background: var(--brown-dark); color: var(--parchment); }
+.atab:not(.active):hover { background: var(--parchment); }
+.apane { display: none; }
+.apane.active { display: block; }
+/* User rows */
+.user-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; background: var(--cream); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--brown); color: var(--parchment); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.avatar.super { background: var(--gold); color: var(--brown-dark); }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-email { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.role-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; white-space: nowrap; }
+.role-super { background: #fef3cd; color: #7d6608; }
+.role-event { background: #eaf7ee; color: #2d6a4f; }
+/* Admin slot rows */
+.admin-slot { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; background: var(--cream); }
+.ast { font-weight: 700; min-width: 90px; color: var(--brown-dark); font-size: 13px; }
+/* Modals */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,31,20,0.6); z-index: 100; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 16px 16px 0 0; padding: 24px 20px 36px; width: 100%; max-width: 480px; animation: slideUp 0.28s ease; max-height: 90vh; overflow-y: auto; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600; color: var(--brown-dark); margin-bottom: 4px; }
+.modal-slot-time { font-size: 14px; color: var(--gold); font-weight: 700; margin-bottom: 18px; }
+/* Success overlay */
+.success-overlay { display: none; position: fixed; inset: 0; background: var(--brown-dark); z-index: 200; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 30px; }
+.success-overlay.open { display: flex; }
+.sc { color: var(--gold-light); font-size: 52px; letter-spacing: 10px; margin-bottom: 24px; animation: dropIn 0.5s ease 0.1s both; }
+.st { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--parchment); margin-bottom: 12px; animation: dropIn 0.5s ease 0.2s both; }
+.ss { font-size: 15px; color: var(--gold-light); margin-bottom: 6px; animation: dropIn 0.5s ease 0.3s both; }
+.stime { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--parchment); margin-bottom: 8px; animation: dropIn 0.5s ease 0.35s both; }
+.snote { font-size: 13px; color: #c9b99a; margin-bottom: 36px; animation: dropIn 0.5s ease 0.4s both; }
+@keyframes dropIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+/* Misc */
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 10px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.mt-12 { margin-top: 12px; }
+.text-muted { color: var(--text-muted); font-size: 14px; }
+.event-banner { background: var(--brown-dark); color: var(--parchment); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; text-align: center; }
+.ev-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.ev-dates { font-size: 13px; color: var(--gold-light); }
+.ev-slots { font-size: 12px; color: #c9b99a; margin-top: 4px; }
+.no-event { text-align: center; padding: 30px 20px; color: var(--text-muted); }
+.no-event .icon { font-size: 36px; margin-bottom: 10px; }
+.info-box { background: var(--parchment); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text-muted); margin-bottom: 14px; border-left: 3px solid var(--gold); line-height: 1.6; }
+.step-list { list-style: none; counter-reset: steps; margin: 0 0 14px; }
+.step-list li { counter-increment: steps; display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--text-muted); align-items: flex-start; line-height: 1.5; }
+.step-list li::before { content: counter(steps); display: flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; background: var(--gold); color: var(--brown-dark); border-radius: 50%; font-size: 11px; font-weight: 700; margin-top: 1px; flex-shrink: 0; }
+.step-list a { color: var(--gold); }
+code { background: var(--parchment); border-radius: 4px; padding: 2px 6px; font-size: 12px; font-family: monospace; color: var(--brown-dark); word-break: break-all; }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,0,0,0.2); border-top-color: currentColor; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <span class="cross">✝</span>
+  <h1>Mary's Village<br>Paraclete Prayer Chain</h1>
+  <p>Sign Up &amp; Pray Together</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('sign-up',this)">Sign Up</button>
+  <button class="tab-btn" onclick="showTab('schedule',this)">Schedule</button>
+  <button class="tab-btn" onclick="showTab('admin',this)">Admin</button>
+</div>
+
+<!-- SIGN UP -->
+<div id="page-sign-up" class="page active">
+  <div id="su-loading" class="no-event"><div class="icon">🙏</div><p>Loading schedule…</p></div>
+  <div id="su-none" class="no-event" style="display:none;"><div class="icon">🙏</div><p>No prayer chain has been scheduled yet.<br>Please check back soon.</p></div>
+  <div id="su-content" style="display:none;">
+    <div id="event-banner-su" class="event-banner"></div>
+    <p class="text-muted" style="margin-bottom:14px;font-size:14px;">Tap an open time slot to reserve your prayer time.</p>
+    <div id="slots-list"></div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div id="page-schedule" class="page">
+  <div id="sch-loading" class="no-event"><div class="icon">📅</div><p>Loading…</p></div>
+  <div id="sch-none" class="no-event" style="display:none;"><div class="icon">📅</div><p>No schedule available yet.</p></div>
+  <div id="sch-content" style="display:none;">
+    <div id="event-banner-sch" class="event-banner"></div>
+    <div class="section-label">Full Prayer Schedule</div>
+    <div id="schedule-list"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+
+  <!-- Login form -->
+  <div id="admin-login">
+    <div class="card">
+      <div class="card-title">✝ Admin Login</div>
+      <div id="login-alert" class="alert alert-error" style="display:none;"></div>
+      <div id="login-loading" class="alert alert-info" style="display:none;"><span class="spinner"></span> Signing in…</div>
+      <div class="field"><label>Email Address</label>
+        <input type="email" id="login-email" placeholder="admin@gmail.com" autocomplete="email">
+      </div>
+      <div class="field"><label>Password</label>
+        <input type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn btn-primary mt-12" onclick="doLogin()">Sign In</button>
+
+
+    </div>
+  </div>
+
+  <!-- Admin panel -->
+  <div id="admin-panel" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--brown-dark);" id="admin-welcome"></div>
+        <div style="font-size:12px;color:var(--text-muted);" id="admin-role-label"></div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">Log Out</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="atab active" onclick="showATab('event',this)">📅 Event</button>
+      <button class="atab" onclick="showATab('signups',this)">🙏 Signups</button>
+      <button class="atab" id="settings-tab-btn" onclick="showATab('settings',this)" style="display:none;">⚙️ Settings</button>
+    </div>
+
+    <!-- EVENT TAB -->
+    <div id="apane-event" class="apane active">
+      <div class="card">
+        <div class="card-title">📅 Event Setup</div>
+        <div id="setup-alert" class="alert"></div>
+        <div class="field"><label>Event Name</label>
+          <input type="text" id="event-name" placeholder="e.g. Lenten Prayer Vigil 2025">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="field"><label>Start Date</label><input type="date" id="start-date"></div>
+          <div class="field"><label>Start Time</label><input type="time" id="start-time"></div>
+          <div class="field"><label>End Date</label><input type="date" id="end-date"></div>
+          <div class="field"><label>End Time</label><input type="time" id="end-time"></div>
+        </div>
+        <div class="field"><label>Slot Interval</label>
+          <select id="interval">
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+          </select>
+        </div>
+        <button class="btn btn-primary mt-12" onclick="generateSlots()">Generate Schedule</button>
+        <button class="btn btn-danger mt-12" id="clear-event-btn" style="display:none;" onclick="clearEvent()">Clear Entire Event &amp; Signups</button>
+      </div>
+    </div>
+
+    <!-- SIGNUPS TAB -->
+    <div id="apane-signups" class="apane">
+      <div id="signups-none" class="no-event">
+        <div class="icon">📋</div>
+        <p>No event scheduled yet.<br>Go to the Event tab to create one.</p>
+      </div>
+      <div id="signups-content" style="display:none;">
+        <div class="card">
+          <div class="card-title">🙏 Current Signups</div>
+          <p id="signups-summary" class="text-muted" style="font-size:13px;margin-bottom:12px;"></p>
+          <div id="admin-slots-list"></div>
+        </div>
+        <button class="btn btn-secondary" onclick="sendAllReminders()">📨 Send Reminder Emails to All</button>
+        <div id="reminder-alert" class="alert mt-12"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB (Super Admin only) -->
+    <div id="apane-settings" class="apane">
+
+      <div class="card">
+        <div class="card-title">👥 Admin Users</div>
+        <div id="users-list"></div>
+        <hr class="divider">
+        <div style="font-size:14px;font-weight:700;color:var(--brown-dark);margin-bottom:12px;">Add New Admin</div>
+        <div class="field"><label>Full Name</label><input type="text" id="nu-name" placeholder="First Last"></div>
+        <div class="field"><label>Email Address</label><input type="email" id="nu-email" placeholder="admin@gmail.com"></div>
+        <div class="field"><label>Temporary Password</label><input type="password" id="nu-pw" placeholder="Min 6 characters"></div>
+        <div class="field"><label>Role</label>
+          <select id="nu-role">
+            <option value="event">Event Admin — create &amp; manage events only</option>
+            <option value="super">Super Admin — full access including settings</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onclick="addUser()">Add Admin User</button>
+        <div id="user-alert" class="alert mt-12"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📧 Email &amp; Script Settings</div>
+        <div class="info-box">Emails are sent via your Google Apps Script (Gmail). Update your Script URL or notification email here.</div>
+        <div class="field"><label>Google Apps Script URL</label>
+          <input type="url" id="gas-url-settings" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div class="field"><label>Admin Notification Email</label>
+          <input type="email" id="admin-notif-email" placeholder="you@gmail.com">
+        </div>
+        <button class="btn btn-secondary" onclick="saveEmailSettings()">Save Settings</button>
+        <div id="email-settings-alert" class="alert mt-12"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔒 Change My Password</div>
+        <div class="field"><label>Current Password</label><input type="password" id="cur-pw" placeholder="Current password"></div>
+        <div class="field"><label>New Password</label><input type="password" id="new-pw" placeholder="Min 6 characters"></div>
+        <button class="btn btn-secondary mt-12" onclick="changePw()">Update Password</button>
+        <div id="pw-alert" class="alert mt-12"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🛠 Script Setup Guide</div>
+        <div class="info-box">Use this if you need to (re)deploy your Google Apps Script.</div>
+        <ul class="step-list">
+          <li>Go to <a href="https://script.google.com" target="_blank">script.google.com</a> → New Project.</li>
+          <li>Delete all existing code, paste the script (button below), and save.</li>
+          <li><strong>Deploy → New Deployment</strong> → Web app → Execute as: <em>Me</em> → Access: <em>Anyone</em> → Deploy.</li>
+          <li>Authorize when prompted (needs Gmail + Drive).</li>
+          <li>Copy the Web App URL → paste it on the Admin login screen.</li>
+        </ul>
+        <button class="btn btn-outline" onclick="showScriptModal()">View &amp; Copy Script Code</button>
+      </div>
+
+    </div><!-- end settings pane -->
+  </div><!-- end admin-panel -->
+</div><!-- end admin page -->
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="sc">✝</div>
+  <div class="st">You're Registered!</div>
+  <div class="ss">Your prayer time has been reserved</div>
+  <div class="stime" id="s-slot-time"></div>
+  <div class="snote" id="s-note"></div>
+  <button class="btn btn-primary" style="max-width:240px;animation:dropIn 0.5s ease 0.5s both;"
+    onclick="document.getElementById('success-overlay').classList.remove('open');switchToSchedule();">Done &nbsp;✓</button>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal" onclick="if(event.target===this)closeBookingModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Reserve This Time</div>
+    <div class="modal-slot-time" id="modal-slot-label"></div>
+    <div id="booking-alert" class="alert"></div>
+    <div class="field"><label>First Name</label><input type="text" id="book-first" placeholder="First name" autocomplete="given-name"></div>
+    <div class="field"><label>Last Name</label><input type="text" id="book-last" placeholder="Last name" autocomplete="family-name"></div>
+    <div class="field"><label>Email Address</label><input type="email" id="book-email" placeholder="your@email.com" autocomplete="email"></div>
+    <button class="btn btn-primary mt-12" id="book-btn" onclick="confirmBooking()">✝ Confirm My Prayer Time</button>
+    <button class="btn btn-outline mt-12" onclick="closeBookingModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- SCRIPT CODE MODAL -->
+<div class="modal-overlay" id="script-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="margin-bottom:10px;">Google Apps Script Code</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Copy this entire script and paste it into your Google Apps Script project.</p>
+    <div style="background:var(--brown-dark);border-radius:8px;padding:14px;margin-bottom:12px;max-height:300px;overflow-y:auto;">
+      <pre id="script-display" style="color:#f0ead8;font-size:10px;font-family:monospace;white-space:pre-wrap;line-height:1.5;margin:0;"></pre>
+    </div>
+    <button class="btn btn-primary" onclick="copyScript()">Copy Script Code</button>
+    <button class="btn btn-outline mt-12" onclick="document.getElementById('script-modal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────
+let GAS_URL = localStorage.getItem('mvcpc_gas_url') || 'https://script.google.com/macros/s/AKfycbzTxcjSCl4wMiCmTgIcqNgyWrnLwoKCoPXlQlocuWrr9xGdYu7ObqvOzK-Q5jc1ANesjQ/exec';
+let currentUser = null;
+let appData = null;
+let selectedSlot = null;
+
+// ─── Utils ────────────────────────────────────────────────────────────
+const fmtDT   = iso => new Date(iso).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+const fmtTime = iso => new Date(iso).toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+const fmtDate = iso => new Date(iso).toLocaleString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const todayStr = () => new Date().toISOString().slice(0,10);
+const initials = n => (n||'?').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+function nearestHalf(offsetH) {
+  const n=new Date(), m=n.getMinutes();
+  n.setMinutes(m<15?0:m<45?30:60,0,0);
+  if(offsetH) n.setHours(n.getHours()+offsetH);
+  return n.toTimeString().slice(0,5);
+}
+function showAlert(id, type, msg, persist) {
+  const el = typeof id==='string' ? document.getElementById(id) : id;
+  if(!el) return;
+  el.className='alert alert-'+type+' show';
+  el.style.display='block';
+  el.innerHTML=msg;
+  if(!persist) setTimeout(()=>{ el.style.display='none'; el.className='alert'; }, 5000);
+}
+function showToast(msg) {
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--brown-dark);color:var(--parchment);padding:12px 22px;border-radius:24px;font-size:14px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3);white-space:nowrap;';
+  t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000);
+}
+
+// ─── API ──────────────────────────────────────────────────────────────
+async function api(payload) {
+  if(!GAS_URL) throw new Error('No Script URL configured. Please add it on the Admin login screen.');
+  const res = await fetch(GAS_URL, { method:'POST', body:JSON.stringify(payload) });
+  const json = await res.json();
+  if(json.status==='error') throw new Error(json.message || 'Script returned an error.');
+  return json;
+}
+
+// ─── Main tabs ────────────────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='sign-up') loadSignUp();
+  if(name==='schedule') loadSchedule();
+}
+
+// ─── Admin inner tabs ─────────────────────────────────────────────────
+function switchToSchedule() {
+  const btn = document.querySelectorAll('.tab-btn')[1];
+  showTab('schedule', btn);
+}
+
+function showATab(name, btn) {
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.apane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('apane-'+name).classList.add('active');
+  if(name==='signups') renderSignups();
+  if(name==='settings') renderSettings();
+}
+
+// ─── Sign Up ──────────────────────────────────────────────────────────
+async function loadSignUp() {
+  show('su-loading'); hide('su-none'); hide('su-content');
+  try {
+    const r = await api({action:'getPublicData'});
+    appData = r.data;
+    hide('su-loading');
+    if(!appData.event) { show('su-none'); return; }
+    show('su-content');
+    const open = appData.slots.filter(s=>!s.booked).length;
+    document.getElementById('event-banner-su').innerHTML =
+      `<div class="ev-name">${appData.event.name}</div>
+       <div class="ev-dates">${fmtDate(appData.event.start)}</div>
+       <div class="ev-slots">${open} of ${appData.slots.length} slots open</div>`;
+    buildSlots('slots-list', appData.slots, true);
+  } catch(e) {
+    hide('su-loading'); show('su-none');
+    document.querySelector('#su-none p').textContent = 'Could not load schedule. Check that your Script URL is saved correctly.';
+  }
+}
+
+function buildSlots(containerId, slots, clickable) {
+  const list = document.getElementById(containerId);
+  list.innerHTML = '';
+  const days = {};
+  slots.forEach((s,i)=>{ const k=new Date(s.time).toDateString(); if(!days[k])days[k]=[]; days[k].push({s,i}); });
+  for(const [,items] of Object.entries(days)) {
+    const lbl=document.createElement('div'); lbl.className='section-label';
+    lbl.textContent=fmtDate(items[0].s.time); list.appendChild(lbl);
+    items.forEach(({s,i})=>{
+      const el=document.createElement('div');
+      el.className='slot-item'+(s.booked?' booked':'');
+      el.innerHTML=`<div class="slot-time">${fmtTime(s.time)}</div>
+        <div class="slot-name">${s.booked ? s.firstName+' '+s.lastName : 'Open'}</div>
+        <span class="slot-badge ${s.booked?'badge-taken':'badge-open'}">${s.booked?'Taken':'Open'}</span>`;
+      if(clickable && !s.booked) el.onclick=()=>openBooking(i,s);
+      if(!clickable) el.style.cursor='default';
+      list.appendChild(el);
+    });
+  }
+}
+
+function openBooking(index, slot) {
+  selectedSlot={index,slot};
+  document.getElementById('modal-slot-label').textContent=fmtDT(slot.time);
+  ['book-first','book-last','book-email'].forEach(id=>document.getElementById(id).value='');
+  hide('booking-alert');
+  document.getElementById('booking-modal').classList.add('open');
+}
+function closeBookingModal() { document.getElementById('booking-modal').classList.remove('open'); selectedSlot=null; }
+
+async function confirmBooking() {
+  const first=document.getElementById('book-first').value.trim();
+  const last =document.getElementById('book-last').value.trim();
+  const email=document.getElementById('book-email').value.trim();
+  if(!first||!last||!email){ showAlert('booking-alert','error','Please fill in all fields.'); return; }
+  if(!/\S+@\S+\.\S+/.test(email)){ showAlert('booking-alert','error','Please enter a valid email.'); return; }
+  const btn=document.getElementById('book-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Saving…';
+  try {
+    await api({action:'bookSlot', index:selectedSlot.index, firstName:first, lastName:last, email});
+    closeBookingModal();
+    document.getElementById('s-slot-time').textContent=fmtDT(selectedSlot.slot.time);
+    document.getElementById('s-note').textContent='A confirmation email is on its way to '+email;
+    document.getElementById('success-overlay').classList.add('open');
+    loadSignUp();
+  } catch(e) {
+    showAlert('booking-alert','error',e.message||'Could not save. Please try again.');
+  } finally { btn.disabled=false; btn.textContent='✝ Confirm My Prayer Time'; }
+}
+
+// ─── Schedule ─────────────────────────────────────────────────────────
+async function loadSchedule() {
+  show('sch-loading'); hide('sch-none'); hide('sch-content');
+  try {
+    const r=await api({action:'getPublicData'});
+    appData=r.data; hide('sch-loading');
+    if(!appData.event){ show('sch-none'); return; }
+    show('sch-content');
+    document.getElementById('event-banner-sch').innerHTML=
+      `<div class="ev-name">${appData.event.name}</div><div class="ev-dates">${fmtDate(appData.event.start)}</div>`;
+    buildSlots('schedule-list', appData.slots, false);
+  } catch(e){ hide('sch-loading'); show('sch-none'); }
+}
+
+// ─── Admin login ──────────────────────────────────────────────────────
+function saveGasUrl() {
+  const url=document.getElementById('gas-url-login').value.trim();
+  if(!url){ showAlert('gas-url-alert','error','Please enter a URL.'); return; }
+  GAS_URL=url; localStorage.setItem('mvcpc_gas_url',url);
+  showAlert('gas-url-alert','success','URL saved. You can now log in.');
+  hide('first-time-setup');
+}
+
+async function doLogin() {
+  const email=document.getElementById('login-email').value.trim();
+  const pw   =document.getElementById('login-pw').value;
+  hide('login-alert');
+  if(!email||!pw){ showAlert('login-alert','error','Please enter your email and password.'); return; }
+  if(!GAS_URL){ showAlert('login-alert','error','Please save your Script URL first.'); return; }
+  show('login-loading');
+  try {
+    const r=await api({action:'login', email, password:pw});
+    currentUser=r.user; appData=r.data;
+    hide('login-loading'); hide('admin-login');
+    show('admin-panel');
+    document.getElementById('admin-welcome').textContent='Welcome, '+currentUser.name.split(' ')[0];
+    document.getElementById('admin-role-label').textContent=currentUser.role==='super'?'Super Admin':'Event Admin';
+    if(currentUser.role==='super') show('settings-tab-btn');
+    populateEventForm();
+  } catch(e) {
+    hide('login-loading');
+    showAlert('login-alert','error',e.message||'Login failed.');
+  }
+}
+
+function doLogout() {
+  currentUser=null; appData=null;
+  hide('admin-panel'); show('admin-login');
+  document.getElementById('login-pw').value='';
+  hide('settings-tab-btn');
+  // reset inner tabs to Event
+  document.querySelectorAll('.atab').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.apane').forEach((p,i)=>p.classList.toggle('active',i===0));
+}
+
+// ─── Event tab ────────────────────────────────────────────────────────
+function populateEventForm() {
+  const ev=appData?.event;
+  if(ev){
+    document.getElementById('event-name').value=ev.name||'';
+    const s=new Date(ev.start), e=new Date(ev.end);
+    document.getElementById('start-date').value=s.toISOString().slice(0,10);
+    document.getElementById('start-time').value=s.toTimeString().slice(0,5);
+    document.getElementById('end-date').value=e.toISOString().slice(0,10);
+    document.getElementById('end-time').value=e.toTimeString().slice(0,5);
+    document.getElementById('interval').value=ev.interval||30;
+    show('clear-event-btn');
+  } else {
+    document.getElementById('start-date').value=todayStr();
+    document.getElementById('end-date').value=todayStr();
+    document.getElementById('start-time').value=nearestHalf(0);
+    document.getElementById('end-time').value=nearestHalf(1);
+    hide('clear-event-btn');
+  }
+}
+
+async function generateSlots() {
+  const name=document.getElementById('event-name').value.trim();
+  const sd=document.getElementById('start-date').value;
+  const st=document.getElementById('start-time').value;
+  const ed=document.getElementById('end-date').value;
+  const et=document.getElementById('end-time').value;
+  const interval=parseInt(document.getElementById('interval').value);
+  if(!name||!sd||!st||!ed||!et){ showAlert('setup-alert','error','Please fill in all fields.'); return; }
+  const start=new Date(sd+'T'+st), end=new Date(ed+'T'+et);
+  if(end<=start){ showAlert('setup-alert','error','End must be after start.'); return; }
+  const slots=[]; let cur=new Date(start);
+  while(cur<end){ slots.push({time:cur.toISOString(),booked:false,firstName:'',lastName:'',email:''}); cur=new Date(cur.getTime()+interval*60000); }
+  if(!slots.length){ showAlert('setup-alert','error','No slots generated. Check your times.'); return; }
+  if(slots.length>200){ showAlert('setup-alert','error','Too many slots ('+slots.length+'). Reduce range or use 1-hour intervals.'); return; }
+  showAlert('setup-alert','info','<span class="spinner"></span>Saving to Google Drive…',true);
+  try {
+    const r=await api({action:'saveEvent', event:{name,start:start.toISOString(),end:end.toISOString(),interval}, slots});
+    appData=r.data;
+    showAlert('setup-alert','success',slots.length+' prayer slots saved successfully!');
+    show('clear-event-btn');
+  } catch(e){ showAlert('setup-alert','error','Failed to save: '+e.message); }
+}
+
+async function clearEvent() {
+  if(!confirm('Delete the entire event and all signups? This cannot be undone.')) return;
+  showAlert('setup-alert','info','<span class="spinner"></span>Clearing…',true);
+  try {
+    const r=await api({action:'clearEvent'});
+    appData=r.data;
+    showAlert('setup-alert','info','Event cleared.');
+    hide('clear-event-btn');
+  } catch(e){ showAlert('setup-alert','error','Failed: '+e.message); }
+}
+
+// ─── Signups tab ──────────────────────────────────────────────────────
+function renderSignups() {
+  if(!appData?.slots?.length){ show('signups-none'); hide('signups-content'); return; }
+  hide('signups-none'); show('signups-content');
+  const booked=appData.slots.filter(s=>s.booked);
+  document.getElementById('signups-summary').textContent=booked.length+' of '+appData.slots.length+' slots filled';
+  const list=document.getElementById('admin-slots-list'); list.innerHTML='';
+  appData.slots.forEach((slot,i)=>{
+    const el=document.createElement('div'); el.className='admin-slot';
+    el.innerHTML=`<div class="ast">${fmtTime(slot.time)}</div>
+      <div style="flex:1;">${slot.booked
+        ?`<div style="font-size:14px;font-weight:700;color:var(--text);">${slot.firstName} ${slot.lastName}</div>
+           <div style="font-size:12px;color:var(--text-muted);">${slot.email}</div>`
+        :`<div style="font-size:13px;color:var(--text-muted);font-style:italic;">— open —</div>`}</div>
+      ${slot.booked?`<button class="btn btn-outline-danger btn-sm" style="font-size:11px;padding:4px 10px;" onclick="removeBooking(${i})">Remove</button>`:''}`;
+    list.appendChild(el);
+  });
+}
+
+async function removeBooking(i) {
+  if(!confirm('Remove this booking?')) return;
+  try {
+    const r=await api({action:'removeBooking', index:i});
+    appData=r.data; renderSignups();
+  } catch(e){ showToast('Error: '+e.message); }
+}
+
+async function sendAllReminders() {
+  const booked=appData?.slots?.filter(s=>s.booked)||[];
+  if(!booked.length){ showAlert('reminder-alert','error','No signups to remind.'); return; }
+  showAlert('reminder-alert','info','<span class="spinner"></span>Sending '+booked.length+' reminder(s)…',true);
+  try {
+    const r=await api({action:'sendReminders'});
+    showAlert('reminder-alert','success',r.sent+' reminder(s) sent successfully.');
+  } catch(e){ showAlert('reminder-alert','error','Failed: '+e.message); }
+}
+
+// ─── Settings tab ─────────────────────────────────────────────────────
+function renderSettings() {
+  if(!appData) return;
+  document.getElementById('gas-url-settings').value=GAS_URL||'';
+  document.getElementById('admin-notif-email').value=appData.settings?.adminEmail||'';
+  renderUserList();
+}
+
+function renderUserList() {
+  const list=document.getElementById('users-list'); list.innerHTML='';
+  (appData.admins||[]).forEach((u,i)=>{
+    const isSelf=u.email===currentUser?.email;
+    const el=document.createElement('div'); el.className='user-row';
+    el.innerHTML=`
+      <div class="avatar ${u.role==='super'?'super':''}">${initials(u.name)}</div>
+      <div class="user-info">
+        <div class="user-name">${u.name}${isSelf?' <span style="font-weight:400;color:var(--text-muted);font-size:12px;">(you)</span>':''}</div>
+        <div class="user-email">${u.email}</div>
+      </div>
+      <span class="role-badge ${u.role==='super'?'role-super':'role-event'}">${u.role==='super'?'Super':'Event'}</span>
+      ${!isSelf?`<button class="btn btn-outline-danger btn-sm" style="font-size:11px;padding:4px 10px;" onclick="removeUser(${i})">Remove</button>`:''}`;
+    list.appendChild(el);
+  });
+}
+
+async function addUser() {
+  const name=document.getElementById('nu-name').value.trim();
+  const email=document.getElementById('nu-email').value.trim();
+  const pw=document.getElementById('nu-pw').value.trim();
+  const role=document.getElementById('nu-role').value;
+  if(!name||!email||!pw){ showAlert('user-alert','error','Please fill in all fields.'); return; }
+  if(!/\S+@\S+\.\S+/.test(email)){ showAlert('user-alert','error','Invalid email address.'); return; }
+  if(pw.length<6){ showAlert('user-alert','error','Password must be at least 6 characters.'); return; }
+  try {
+    const r=await api({action:'addUser', user:{name,email,role}, password:pw});
+    appData=r.data;
+    showAlert('user-alert','success',name+' added successfully.');
+    ['nu-name','nu-email','nu-pw'].forEach(id=>document.getElementById(id).value='');
+    renderUserList();
+  } catch(e){ showAlert('user-alert','error',e.message); }
+}
+
+async function removeUser(i) {
+  const u=appData.admins[i];
+  if(!confirm('Remove '+u.name+' ('+u.email+') from admin access?')) return;
+  try {
+    const r=await api({action:'removeUser', index:i});
+    appData=r.data; renderUserList(); showToast(u.name+' removed.');
+  } catch(e){ showToast('Error: '+e.message); }
+}
+
+async function saveEmailSettings() {
+  const url=document.getElementById('gas-url-settings').value.trim();
+  const adminEmail=document.getElementById('admin-notif-email').value.trim();
+  if(url){ GAS_URL=url; localStorage.setItem('mvcpc_gas_url',url); }
+  try {
+    const r=await api({action:'saveSettings', settings:{adminEmail}});
+    appData=r.data; showAlert('email-settings-alert','success','Settings saved.');
+  } catch(e){ showAlert('email-settings-alert','error','Failed: '+e.message); }
+}
+
+async function changePw() {
+  const cur=document.getElementById('cur-pw').value;
+  const nw=document.getElementById('new-pw').value;
+  if(!cur||!nw){ showAlert('pw-alert','error','Please fill in both fields.'); return; }
+  if(nw.length<6){ showAlert('pw-alert','error','New password must be at least 6 characters.'); return; }
+  try {
+    await api({action:'changePassword', email:currentUser.email, currentPassword:cur, newPassword:nw});
+    showAlert('pw-alert','success','Password updated successfully.');
+    document.getElementById('cur-pw').value=''; document.getElementById('new-pw').value='';
+  } catch(e){ showAlert('pw-alert','error',e.message); }
+}
+
+// ─── Script display ────────────────────────────────────────────────────
+function showScriptModal() {
+  document.getElementById('script-display').textContent=GAS_CODE;
+  document.getElementById('script-modal').classList.add('open');
+}
+function copyScript() {
+  navigator.clipboard.writeText(GAS_CODE)
+    .then(()=>showToast('Script copied to clipboard!'))
+    .catch(()=>showToast('Please select and copy the code manually.'));
+}
+
+// ─── DOM helpers ───────────────────────────────────────────────────────
+function show(id){ const el=document.getElementById(id); if(el) el.style.display=''; }
+function hide(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+// ─── Init ─────────────────────────────────────────────────────────────
+
+loadSignUp();
+
+// ─── Google Apps Script source ────────────────────────────────────────
+const GAS_CODE = `// ================================================================
+// Mary's Village Paraclete Prayer Chain — Google Apps Script
+// Deploy as Web App: Execute as Me | Access: Anyone
+// ================================================================
+
+var DATA_FILE = 'mvcpc_data.json';
+
+function getOrCreateFile() {
+  var files = DriveApp.getFilesByName(DATA_FILE);
+  if (files.hasNext()) return files.next();
+  return DriveApp.createFile(DATA_FILE,
+    JSON.stringify(defaultData()), 'application/json');
+}
+
+function defaultData() {
+  return {
+    admins: [{
+      name: 'Super Admin',
+      email: 'mvpsb26@gmail.com',
+      passwordHash: hashPw('prayerchain'),
+      role: 'super'
+    }],
+    event: null,
+    slots: [],
+    settings: { adminEmail: 'mvpsb26@gmail.com' }
+  };
+}
+
+function readData() {
+  return JSON.parse(getOrCreateFile().getBlob().getDataAsString());
+}
+
+function writeData(data) {
+  var files = DriveApp.getFilesByName(DATA_FILE);
+  if (files.hasNext()) files.next().setContent(JSON.stringify(data));
+  else DriveApp.createFile(DATA_FILE, JSON.stringify(data), 'application/json');
+}
+
+function hashPw(pw) {
+  var b = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, pw, Utilities.Charset.UTF_8);
+  return b.map(function(x){ return ('0'+(x<0?x+256:x).toString(16)).slice(-2); }).join('');
+}
+
+function clean(s) {
+  return String(s||'').replace(/[<>&"']/g, function(c){
+    return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function publicData(data) {
+  return {
+    event: data.event,
+    slots: (data.slots||[]).map(function(s){
+      return { time:s.time, booked:s.booked,
+               firstName:s.booked?s.firstName:'',
+               lastName:s.booked?s.lastName:'', email:'' };
+    })
+  };
+}
+
+function fmtTime(iso) {
+  return Utilities.formatDate(new Date(iso),
+    Session.getScriptTimeZone(), "EEE, MMM d 'at' h:mm a");
+}
+
+function sendMail(toEmail, toName, eventName, slotTime, adminEmail, isReminder) {
+  var subj = isReminder
+    ? 'Reminder: Your Prayer Time \u2014 ' + eventName
+    : '\u271d Prayer Time Confirmed \u2014 ' + eventName;
+  var html = emailHtml(toName, eventName, slotTime, isReminder);
+  var plain = 'Dear ' + toName + ',\\n\\n'
+    + (isReminder ? 'Reminder of your upcoming prayer time:\\n\\n'
+                  : 'Your prayer time is confirmed:\\n\\n')
+    + 'Event: ' + eventName + '\\nTime: ' + slotTime + '\\n\\n'
+    + 'Thank you for your faithful commitment to prayer.\\n\\n'
+    + 'God bless you,\\nMary\\'s Village Paraclete Prayer Chain';
+  GmailApp.sendEmail(toEmail, subj, plain, {htmlBody: html});
+  if (adminEmail && adminEmail !== toEmail)
+    GmailApp.sendEmail(adminEmail, '[COPY] ' + subj, plain, {htmlBody: html});
+}
+
+function emailHtml(name, event, time, isReminder) {
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'
+    + 'body{margin:0;padding:0;background:#f0ead8;font-family:Georgia,serif;}'
+    + '.w{max-width:520px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #d9cbb8;}'
+    + '.h{background:#3a2318;text-align:center;padding:32px 24px 24px;}'
+    + '.h .x{font-size:28px;color:#d4b84a;letter-spacing:8px;display:block;margin-bottom:10px;}'
+    + '.h h1{font-family:Georgia,serif;font-size:22px;color:#f0ead8;margin:0;font-weight:normal;line-height:1.3;}'
+    + '.h p{font-size:11px;color:#d4b84a;letter-spacing:2px;text-transform:uppercase;margin:6px 0 0;}'
+    + '.bar{height:4px;background:#b8972a;}'
+    + '.b{padding:28px;}'
+    + '.box{background:#faf7f2;border-radius:8px;border:1px solid #d9cbb8;border-left:4px solid #b8972a;padding:16px 18px;margin:18px 0;}'
+    + '.bl{font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:#7a6a5a;margin-bottom:4px;}'
+    + '.be{font-size:16px;font-weight:bold;color:#3a2318;margin-bottom:8px;}'
+    + '.bt{font-size:22px;color:#b8972a;font-weight:bold;}'
+    + 'p{font-size:14px;color:#5c3d2e;line-height:1.7;margin:12px 0;}'
+    + '.f{background:#3a2318;padding:18px 24px;text-align:center;}'
+    + '.f p{font-size:12px;color:#c9b99a;margin:0;line-height:1.6;}'
+    + '.f strong{color:#d4b84a;}'
+    + '</style></head><body><div class="w">'
+    + '<div class="h"><span class="x">\u271d</span>'
+    + '<h1>Mary\\'s Village<br>Paraclete Prayer Chain</h1>'
+    + '<p>Sign Up &amp; Pray Together</p></div>'
+    + '<div class="bar"></div><div class="b">'
+    + '<p>Dear ' + clean(name) + ',</p>'
+    + '<p>' + (isReminder
+        ? 'This is a friendly reminder of your upcoming prayer commitment.'
+        : 'Thank you for signing up! Your prayer time has been reserved.') + '</p>'
+    + '<div class="box">'
+    + '<div class="bl">Your Prayer Time</div>'
+    + '<div class="be">' + clean(event) + '</div>'
+    + '<div class="bt">' + clean(time) + '</div></div>'
+    + '<p>Please come prepared with an open heart and spirit.</p>'
+    + '<p style="font-style:italic;color:#7a6a5a;">'
+    + '&ldquo;Where two or three gather in my name, there am I with them.&rdquo; &mdash; Matthew 18:20'
+    + '</p></div>'
+    + '<div class="f"><p><strong>Mary\\'s Village Paraclete Prayer Chain</strong><br>'
+    + 'God bless you for your faithfulness.</p></div>'
+    + '</div></body></html>';
+}
+
+function doPost(e) {
+  try {
+    var p = JSON.parse(e.postData.contents);
+    var data = readData();
+
+    if (p.action === 'getPublicData')
+      return ok({ data: publicData(data) });
+
+    if (p.action === 'login') {
+      var found = null;
+      for (var i=0; i<data.admins.length; i++) {
+        if (data.admins[i].email === p.email &&
+            data.admins[i].passwordHash === hashPw(p.password)) {
+          found = data.admins[i]; break;
+        }
+      }
+      if (!found) throw new Error('Incorrect email or password.');
+      return ok({ user:{name:found.name,email:found.email,role:found.role}, data:data });
+    }
+
+    if (p.action === 'bookSlot') {
+      var idx = parseInt(p.index);
+      if (!data.slots[idx] || data.slots[idx].booked) throw new Error('Slot not available.');
+      data.slots[idx].booked = true;
+      data.slots[idx].firstName = clean(p.firstName);
+      data.slots[idx].lastName  = clean(p.lastName);
+      data.slots[idx].email     = clean(p.email);
+      writeData(data);
+      try { sendMail(p.email, p.firstName+' '+p.lastName,
+              data.event.name, fmtTime(data.slots[idx].time),
+              data.settings.adminEmail, false); } catch(me){}
+      return ok({ data: publicData(data) });
+    }
+
+    if (p.action === 'saveEvent') {
+      data.event = p.event; data.slots = p.slots;
+      writeData(data); return ok({ data: data });
+    }
+
+    if (p.action === 'clearEvent') {
+      data.event = null; data.slots = [];
+      writeData(data); return ok({ data: data });
+    }
+
+    if (p.action === 'removeBooking') {
+      var ri = parseInt(p.index);
+      if (data.slots[ri]) {
+        data.slots[ri].booked=false; data.slots[ri].firstName='';
+        data.slots[ri].lastName='';  data.slots[ri].email='';
+      }
+      writeData(data); return ok({ data: data });
+    }
+
+    if (p.action === 'sendReminders') {
+      var sent = 0;
+      (data.slots||[]).forEach(function(s) {
+        if (s.booked) {
+          try { sendMail(s.email, s.firstName+' '+s.lastName,
+                  data.event.name, fmtTime(s.time),
+                  data.settings.adminEmail, true); sent++; }
+          catch(me){}
+        }
+      });
+      return ok({ sent: sent });
+    }
+
+    if (p.action === 'addUser') {
+      if (data.admins.some(function(a){return a.email===p.user.email;}))
+        throw new Error('An admin with that email already exists.');
+      data.admins.push({ name:clean(p.user.name), email:p.user.email.toLowerCase(),
+        passwordHash:hashPw(p.password), role:p.user.role||'event' });
+      writeData(data); return ok({ data: data });
+    }
+
+    if (p.action === 'removeUser') {
+      data.admins.splice(parseInt(p.index), 1);
+      writeData(data); return ok({ data: data });
+    }
+
+    if (p.action === 'changePassword') {
+      var changed = false;
+      for (var ci=0; ci<data.admins.length; ci++) {
+        if (data.admins[ci].email === p.email &&
+            data.admins[ci].passwordHash === hashPw(p.currentPassword)) {
+          data.admins[ci].passwordHash = hashPw(p.newPassword);
+          changed = true; break;
+        }
+      }
+      if (!changed) throw new Error('Current password is incorrect.');
+      writeData(data); return ok({});
+    }
+
+    if (p.action === 'saveSettings') {
+      data.settings = Object.assign(data.settings||{}, p.settings);
+      writeData(data); return ok({ data: data });
+    }
+
+    throw new Error('Unknown action: ' + p.action);
+
+  } catch(err) {
+    return ContentService.createTextOutput(
+      JSON.stringify({status:'error', message:err.toString()})
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function ok(obj) {
+  return ContentService.createTextOutput(
+    JSON.stringify(Object.assign({status:'ok'}, obj))
+  ).setMimeType(ContentService.MimeType.JSON);
+}`;
+</script>
+</body>
+</html>
